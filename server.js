@@ -2,7 +2,6 @@ const WebSocket = require('ws')
 
 const port = 9898
 
-
 console.log(`Creating Websocket on port ${port}`)
 const wss = new WebSocket.Server({ port })
 
@@ -11,15 +10,12 @@ wss.on('connection', (ws) => {
     console.log('Client connected!')
 
     // When the client sends a message to the server
-    ws.on('message', (message) => {
-        console.log(`Received message => ${message}`)
-    })
+    ws.on('message', (pageSlug) => {
+        console.log(`Slug received: ${pageSlug}`)
 
-    // setInterval(() => {
-    //     console.log(`Sending message`)
-    //     // Send a message to the client
-    //     ws.send(`testing message ${Math.random()}`)
-    // }, 5000);
+        // Get data for slug and send it back to the client
+        ws.send(`insert data for slug ${pageSlug}: ${Math.random()}`)
+    })
 })
 
 // wss.on('connection', function connection(ws) {

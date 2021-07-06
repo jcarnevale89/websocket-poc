@@ -9,9 +9,12 @@
 </head>
 
 <body>
-    <div v-scope="Message()">
-        {{ message }}
-        <button @click="sendMessage">Get Data</button>
+    <div v-scope @mounted="setupMessage">
+        <div>
+            {{ message }}
+        </div>
+        <button @click="sendMessage('abc')">Get Slug abc</button>
+        <button @click="sendMessage('xyz')">Get Slug xyz</button>
     </div>
 
     <script src="https://unpkg.com/petite-vue"></script>
@@ -24,27 +27,24 @@
             console.log('websocket open')
         }
 
-        ws.onmessage = function (data) {
-            console.log('message rec', data)
-        }
-
-        function Message() {
-            return {
-                message: null,
-                sendMessage() {
-                    ws.send(Math.random())
-                },
-                mounted() {
-                    // ws.onmessage = (data) => {
-                    //     console.log(data)
-                    //     this.message = data
-                    // }
-                }
-            }
-        }
+        // ws.onmessage = function (data) {
+        //     console.log('message rec', data)
+        // }
 
         PetiteVue.createApp({
-            Message
+            message: null,
+            sendMessage(slug) {
+                ws.send(slug)
+            },
+            setMessage(data) {
+                console.log('ws data', data.data)
+                this.message = data.data
+            },
+            setupMessage() {
+                ws.onmessage = (data) => {
+                    this.setMessage(data)
+                }
+            }
         }).mount()
 
     </script>
