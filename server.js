@@ -1,3 +1,4 @@
+const fs = require('fs')
 const WebSocket = require('ws')
 
 const port = 9898
@@ -13,10 +14,26 @@ wss.on('connection', (ws) => {
     ws.on('message', (pageSlug) => {
         console.log(`Slug received: ${pageSlug}`)
 
+        const pageData = getPageDataBySlug(pageSlug)
+
         // Get data for slug and send it back to the client
-        ws.send(`insert data for slug ${pageSlug}: ${Math.random()}`)
+        ws.send(JSON.stringify(pageData))
     })
+
+    // Add file watcher here
+    // fs.watchFile()
 })
+
+
+
+function getPageDataBySlug(slug) {
+    const pageSlug = `./pages/${slug}.js`
+
+    delete require.cache[require.resolve(pageSlug)];
+    const data = require(pageSlug)
+
+    return data
+}
 
 // wss.on('connection', function connection(ws) {
 //     ws.on('message', function incoming(data) {
